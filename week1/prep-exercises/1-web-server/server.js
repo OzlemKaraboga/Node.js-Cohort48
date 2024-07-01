@@ -1,14 +1,35 @@
-/**
- * Exercise 3: Create an HTTP web server
- */
-
 const http = require('http');
+const fs = require('fs').promises;
+const path = require('path');
 
-//create a server
-let server = http.createServer(function (req, res) {
-  // YOUR CODE GOES IN HERE
-	res.write('Hello World!'); // Sends a response back to the client
-	res.end(); // Ends the response
+let server = http.createServer(async function (request, response) {
+  
+	try {
+		if (request.url === '/') {
+			response.writeHead(200, { 'Content-Type': 'text/html' });
+			let indexData = await fs.readFile(path.join(__dirname, 'index.html'));
+			response.end(indexData);
+
+		} else if (request.url === '/index.js') {
+			response.writeHead(200, { 'Content-Type': 'text/javascript' });
+			let jsData = await fs.readFile(path.join(__dirname, 'index.js'));
+			response.end(jsData);
+
+		} else if (request.url === '/style.css') {
+			const cssData = await fs.readFile(path.join(__dirname, 'style.css'));
+			response.writeHead(200, { 'Content-Type': 'text/css' });
+			response.end(cssData);
+			
+		} else {
+			response.writeHead(404, { 'Content-Type': 'text/html' });
+			response.end('<h1>404 Not Found</h1>');
+		}
+	} catch (error) {
+		response.writeHead(500, { 'Content-Type': 'text/html' });
+		response.end('<h1>500 Internal Server Error</h1>');
+	}
 });
 
-server.listen(3000); // The server starts to listen on port 3000
+server.listen(3000, () => {
+	console.log('Server is listening on port 3000');
+});
