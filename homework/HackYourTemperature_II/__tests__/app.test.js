@@ -26,7 +26,7 @@ describe("POST /weather", () => {
     expect(response.body).toHaveProperty('error', 'City name must be a string');
   });
 
-  it("should return weather data for Istanbul", async () => {
+  it("should return weather data for existing cities", async () => {
     const response = await request.post('/weather').send({ cityName: 'Istanbul' });
 
     expect(response.status).toBe(200);
